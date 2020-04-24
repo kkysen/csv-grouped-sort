@@ -1,0 +1,25 @@
+{
+    "name": "csv-grouped-sort",
+    "version": "1.0.0",
+    "author": "Khyber Sen",
+    "description": "Sort csv files by grouped rows",
+    "license": "MIT",
+    "main": "lib/csvGroupedSort.mjs",
+    "bin": {
+        "csvGroupedSort": "bin/main.mjs"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kkysen/csv-grouped-sort.git"
+    },
+    "keywords": [
+        "csv"
+    ],
+    "bugs": {
+        "url": "https://github.com/kkysen/csv-grouped-sort/issues"
+    },
+    "homepage": "https://github.com/kkysen/csv-grouped-sort#readme"
+}
