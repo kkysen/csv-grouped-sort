@@ -34,17 +34,8 @@ function average(...values) {
     return values.reduce((a, b) => a + b) / values.length;
 }
 
-const options = {
-    numHeadersToSkip: 1,
-    nameFields: ["First Name", "Last Name"],
-    floatSortField: "Total Average Score",
-    sortBy: Math.min, // or `Math.max` or `average`
-    ascending: false,
-    separateGroupsWithBlankLine: true,
-};
-
 async function main() {
-    const [_node, script, inputFile, outputFile] = process.argv;
+    const [_node, script, inputFile, outputFile, sortBy] = process.argv;
     const paths = [inputFile, outputFile];
     if (paths.includes(undefined)) {
         const scriptName = path.basename(script);
@@ -52,6 +43,22 @@ async function main() {
         return;
     }
     await Promise.all(paths.map(path => fs.stat(path)));
+    const sorts = {
+        min: Math.min,
+        minimum: Math.min,
+        max: Math.max,
+        maximum: Math.max,
+        avg: average,
+        average: average,
+    };
+    const options = {
+        numHeadersToSkip: 1,
+        nameFields: ["First Name", "Last Name"],
+        floatSortField: "Total Average Score",
+        sortBy: sorts[sortBy] ?? (() => {throw new Error(`sortBy must be in ${Object.keys(sorts)}`);})(),
+        ascending: false,
+        separateGroupsWithBlankLine: true,
+    };
     await handelSort({
         paths: {
             input: inputFile,
