@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 
-import {promises as fs} from "fs";
 import * as path from "path";
 import {sortCsvByGroup} from "../lib/csvGroupedSort.mjs";
 
@@ -26,7 +25,20 @@ async function handelSort(
             return values.length === 0 ? 0 : sortBy(...values);
         },
         ascending,
-        transformGroup: group => separateGroupsWithBlankLine ? [{row: []}, ...group] : group,
+        transformGroup: ({group, sortValue}) => {
+            const fieldName = "Sort Value";
+            const isHeader = sortValue === null;
+            if (isHeader) {
+                sortValue = fieldName;
+            }
+            for (const {row, rowObj} of group) {
+                const i = Object.keys(rowObj).indexOf(floatSortField);
+                const value = sortValue.toString();
+                rowObj[fieldName] = value;
+                row.splice(i + 1, 0, value);
+            }
+            return (separateGroupsWithBlankLine && !isHeader) ? [{row: []}, ...group] : group;
+        },
     });
 }
 
