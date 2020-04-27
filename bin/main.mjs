@@ -50,7 +50,6 @@ async function main() {
         console.error(`usage: ${scriptName} <inputFile.csv> <outputFile.csv> <sortBy>`);
         return;
     }
-    await Promise.all(paths.map(path => fs.access(path)));
     const options = {
         numHeadersToSkip: 1,
         nameFields: ["First Name", "Last Name"],
