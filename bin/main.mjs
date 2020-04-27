@@ -37,12 +37,6 @@ function average(...values) {
 async function main() {
     const [_node, script, inputFile, outputFile, sortBy] = process.argv;
     const paths = [inputFile, outputFile];
-    if (paths.includes(undefined)) {
-        const scriptName = path.basename(script);
-        console.error(`usage: ${scriptName} <inputFile.csv> <outputFile.csv>`);
-        return;
-    }
-    await Promise.all(paths.map(path => fs.stat(path)));
     const sorts = {
         min: Math.min,
         minimum: Math.min,
@@ -51,6 +45,12 @@ async function main() {
         avg: average,
         average: average,
     };
+    if (paths.includes(undefined)) {
+        const scriptName = path.basename(script);
+        console.error(`usage: ${scriptName} <inputFile.csv> <outputFile.csv> <sortBy>`);
+        return;
+    }
+    await Promise.all(paths.map(path => fs.access(path)));
     const options = {
         numHeadersToSkip: 1,
         nameFields: ["First Name", "Last Name"],
