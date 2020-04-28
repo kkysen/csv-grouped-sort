@@ -9,7 +9,7 @@ async function handelSort(
         options: {
             numHeadersToSkip,
             nameFields,
-            floatSortField,
+            floatSortFields,
             sortBy,
             ascending,
             separateGroupsWithBlankLine,
@@ -19,7 +19,7 @@ async function handelSort(
         paths,
         numHeadersToSkip,
         getGroupField: row => nameFields.map(field => row[field]).join(" "),
-        getSortField: row => parseFloat(row[floatSortField]),
+        getSortField: row => floatSortFields.map(field => parseFloat(row[field])).find(Boolean),
         sortBy: sortValues => {
             const values = sortValues.filter(Boolean);
             return values.length === 0 ? 0 : sortBy(...values);
@@ -32,7 +32,7 @@ async function handelSort(
                 sortValue = fieldName;
             }
             for (const {row, rowObj} of group) {
-                const i = Object.keys(rowObj).indexOf(floatSortField);
+                const i = Object.keys(rowObj).indexOf(floatSortFields[0]);
                 const value = sortValue.toString();
                 rowObj[fieldName] = value;
                 row.splice(i + 1, 0, value);
@@ -65,7 +65,7 @@ async function main() {
     const options = {
         numHeadersToSkip: 1,
         nameFields: ["First Name", "Last Name"],
-        floatSortField: "Total Average Score",
+        floatSortFields: ["Total Average Score", "Overall Performance\n"],
         sortBy: sorts[sortBy] ?? (() => {throw new Error(`sortBy must be in ${Object.keys(sorts)}`);})(),
         ascending: false,
         separateGroupsWithBlankLine: true,
