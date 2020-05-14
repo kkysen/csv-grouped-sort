@@ -46,6 +46,11 @@ function average(...values) {
     return values.reduce((a, b) => a + b) / values.length;
 }
 
+function onError(message) {
+    console.error(message);
+    process.exit(1);
+}
+
 async function main() {
     const [_node, script, inputFile, outputFile, nameField, sortBy] = process.argv;
     const paths = [inputFile, outputFile];
@@ -64,15 +69,12 @@ async function main() {
     
     const getOption = (fieldObj, fields) => {
         const [name, field] = Object.entries(fieldObj)[0];
-        return fields[field] ?? (() => {
-            throw new Error(`${name} must be in [${Object.keys(fields).join(", ")}]`)
-        })();
+        return fields[field] ?? onError(`error: ${name} must be in [${Object.keys(fields).join(", ")}]`);
     };
     
     if (paths.includes(undefined)) {
         const scriptName = path.basename(script);
-        console.error(`usage: ${scriptName} <inputFile.csv> <outputFile.csv> <nameField> <sortBy>`);
-        return;
+        onError(`usage: ${scriptName} <inputFile.csv> <outputFile.csv> <nameField> <sortBy>`);
     }
     const options = {
         numHeadersToSkip: 1,
