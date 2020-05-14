@@ -47,8 +47,12 @@ function average(...values) {
 }
 
 async function main() {
-    const [_node, script, inputFile, outputFile, sortBy] = process.argv;
+    const [_node, script, inputFile, outputFile, nameField, sortBy] = process.argv;
     const paths = [inputFile, outputFile];
+    const nameFields = {
+        reviewee: ["First Name", "Last Name"],
+        reviewer: ["PA/PM"],
+    };
     const sorts = {
         min: Math.min,
         minimum: Math.min,
@@ -57,16 +61,24 @@ async function main() {
         avg: average,
         average: average,
     };
+    
+    const getOption = (fieldObj, fields) => {
+        const [name, field] = Object.entries(fieldObj)[0];
+        return fields[field] ?? (() => {
+            throw new Error(`${name} must be in [${Object.keys(fields).join(", ")}]`)
+        })();
+    };
+    
     if (paths.includes(undefined)) {
         const scriptName = path.basename(script);
-        console.error(`usage: ${scriptName} <inputFile.csv> <outputFile.csv> <sortBy>`);
+        console.error(`usage: ${scriptName} <inputFile.csv> <outputFile.csv> <nameField> <sortBy>`);
         return;
     }
     const options = {
         numHeadersToSkip: 1,
-        nameFields: ["First Name", "Last Name"],
+        nameFields: getOption({nameField}, nameFields),
         floatSortFields: ["Total Average Score", "Overall Performance\n"],
-        sortBy: sorts[sortBy] ?? (() => {throw new Error(`sortBy must be in ${Object.keys(sorts)}`);})(),
+        sortBy: getOption({sortBy}, sorts),
         ascending: false,
         separateGroupsWithBlankLine: true,
     };
